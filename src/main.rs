@@ -7,7 +7,7 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-//Comment
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::registry()
