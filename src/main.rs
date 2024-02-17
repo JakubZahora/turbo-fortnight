@@ -19,7 +19,7 @@ async fn main() {
         .init();
 
     tokio::join!(
-        serve(using_serve_dir_with_assets_fallback(), 8080),
+        serve(using_serve_dir_with_assets_fallback(), 3000),
     );
 }
 
