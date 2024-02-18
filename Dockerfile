@@ -17,6 +17,8 @@ FROM debian:latest
 COPY --from=builder /usr/src/turbo-fortnight/target/release/turbo-fortnight /usr/local/bin/turbo-fortnight
 COPY --from=builder /usr/src/turbo-fortnight/assets /usr/local/bin/assets
 
+WORKDIR /usr/local/bin/
+
 EXPOSE 3001
 
 # Run the executable

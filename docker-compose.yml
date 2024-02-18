@@ -1,5 +1,5 @@
 services:
-  web-container2:
+  web-container3:
     build: .
     ports:
       - "3001:3001"
