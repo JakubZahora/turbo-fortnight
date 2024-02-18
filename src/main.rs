@@ -19,7 +19,7 @@ async fn main() {
         .init();
 
     tokio::join!(
-        serve(using_serve_dir_with_assets_fallback(), 3000),
+        serve(using_serve_dir_with_assets_fallback(), 3001),
     );
 }
 
@@ -36,7 +36,7 @@ fn using_serve_dir_with_assets_fallback() -> Router {
 }
 
 async fn serve(app: Router, port: u16) {
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     tracing::debug!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app.layer(TraceLayer::new_for_http()))
