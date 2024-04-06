@@ -1,45 +1,71 @@
 use axum::{
-    routing::get, Router,
+    extract::State,
+    http::StatusCode,
+    routing::get,
+    routing::post,
+    Router,
 };
-use std::net::SocketAddr;
+use sqlx::postgres::{PgPool, PgPoolOptions};
+use tokio::net::TcpListener;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use tower_http::{
     services::ServeDir,
-    trace::TraceLayer,
 };
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "example_static_file_server=debug,tower_http=debug".into()),
+                .unwrap_or_else(|_| "example_tokio_postgres=debug".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    tokio::join!(
-        serve(using_serve_dir_with_assets_fallback(), 3001),
-    );
-}
+    let db_connection_str = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://turboadmin:turbofortnight@turbo-fortnight-pgsql-01.cx40oa2q0783.us-east-2.rds.amazonaws.com:5432/postgres".to_string());
 
-fn using_serve_dir_with_assets_fallback() -> Router {
-    // `ServeDir` allows setting a fallback if an asset is not found
-    // so with this `GET /assets/doesnt-exist.jpg` will return `index.html`
-    // rather than a 404
+    // set up connection pool
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .acquire_timeout(Duration::from_secs(3))
+        .connect(&db_connection_str)
+        .await
+        .expect("can't connect to database");
+    
     let serve_dir = ServeDir::new("assets");
 
-    Router::new()
-        .route("/foo", get(|| async { "Hi from /foo" }))
-        .nest_service("/assets", serve_dir.clone())
-        .fallback_service(serve_dir)
+    // build our application with some routes
+    let app = Router::new()
+        .nest_service("/", serve_dir.clone())
+        .route(
+            "/dbCheck",
+            get(using_connection_pool_extractor),
+        )
+        .with_state(pool);
+
+    // run it with hyper
+    let listener = TcpListener::bind("0.0.0.0:3001").await.unwrap();
+    tracing::debug!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, app).await.unwrap();
 }
 
-async fn serve(app: Router, port: u16) {
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    tracing::debug!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, app.layer(TraceLayer::new_for_http()))
+// we can extract the connection pool with `State`
+async fn using_connection_pool_extractor(
+    State(pool): State<PgPool>,
+) -> Result<String, (StatusCode, String)> {
+    sqlx::query_scalar("select 'hello world from pg'")
+        .fetch_one(&pool)
         .await
-        .unwrap(); 
+        .map_err(internal_error)
+}
+
+/// Utility function for mapping any error into a `500 Internal Server Error`
+/// response.
+fn internal_error<E>(err: E) -> (StatusCode, String)
+where
+    E: std::error::Error,
+{
+    (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
 }
