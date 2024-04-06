@@ -23,8 +23,10 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    dotenv::dotenv().ok();
+
     let db_connection_str = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://turboadmin:turbofortnight@turbo-fortnight-pgsql-01.cx40oa2q0783.us-east-2.rds.amazonaws.com:5432/postgres".to_string());
+        .expect("DATABSE_URL must be set");
 
     // set up connection pool
     let pool = PgPoolOptions::new()
