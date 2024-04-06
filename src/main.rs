@@ -1,9 +1,14 @@
+mod models;
+
+use crate::models::User;
+
 use axum::{
     extract::State,
     http::StatusCode,
     routing::get,
     routing::post,
     Router,
+    Json,
 };
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use tokio::net::TcpListener;
@@ -45,6 +50,10 @@ async fn main() {
             "/dbCheck",
             get(using_connection_pool_extractor),
         )
+        .route(
+            "/getUsers",
+            get(get_users),
+        )
         .with_state(pool);
 
     // run it with hyper
@@ -61,6 +70,15 @@ async fn using_connection_pool_extractor(
         .fetch_one(&pool)
         .await
         .map_err(internal_error)
+}
+
+async fn get_users(State(pool): State<PgPool>) -> Json<Vec<User>> {
+    let users = sqlx::query_as!(User, "SELECT id, name FROM users")
+        .fetch_all(&pool)
+        .await
+        .unwrap_or_else(|_| vec![]);
+
+    Json(users)
 }
 
 /// Utility function for mapping any error into a `500 Internal Server Error`
