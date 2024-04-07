@@ -1,10 +1,6 @@
-version: '3.8'
 services:
-  web-container:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    pull_policy: build
+  web-container3:
+    build: .
     ports:
-      - "3000:3000"
+      - "3001:3001"
     restart: unless-stopped
