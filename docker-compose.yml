@@ -1,7 +1,10 @@
 version: '3.8'
 services:
   web-container:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    pull_policy: build
     ports:
       - "3000:3000"
     restart: unless-stopped
