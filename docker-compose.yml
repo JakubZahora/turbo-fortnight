@@ -2,7 +2,7 @@ services:
   web-container3:
     build: .
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgres://turboadmin:turbofortnight@turbo-fortnight-pgsql-01.cx40oa2q0783.us-east-2.rds.amazonaws.com:5432/postgres
     env_file:
       - stack.env
     ports:
