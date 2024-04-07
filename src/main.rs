@@ -29,8 +29,7 @@ async fn main() {
 
     dotenv::dotenv().ok();
 
-    let db_connection_str = std::env::var("DATABASE_URL")
-        .unwrap_or("postgres://turboadmin:turbofortnight@turbo-fortnight-pgsql-01.cx40oa2q0783.us-east-2.rds.amazonaws.com:5432/postgres".to_string());
+    let db_connection_str = "postgres://turboadmin:turbofortnight@turbo-fortnight-pgsql-01.cx40oa2q0783.us-east-2.rds.amazonaws.com:5432/postgres".to_string();
 
     // set up connection pool
     let pool = PgPoolOptions::new()
