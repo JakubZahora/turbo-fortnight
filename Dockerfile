@@ -19,6 +19,9 @@ COPY --from=builder /usr/src/turbo-fortnight/assets /usr/local/bin/assets
 
 WORKDIR /usr/local/bin/
 
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 EXPOSE 3001
 
 # Run the executable
