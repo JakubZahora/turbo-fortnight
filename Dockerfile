@@ -21,7 +21,7 @@ WORKDIR /usr/local/bin/
 
 EXPOSE 3001
 
-ENV DATABASE_URL=$(DATABASE_URL)
+ENV DATABASE_URL=postgres://turboadmin:turbofortnight@turbo-fortnight-pgsql-01.cx40oa2q0783.us-east-2.rds.amazonaws.com:5432/postgres
 
 # Run the executable
 CMD ["turbo-fortnight"]
