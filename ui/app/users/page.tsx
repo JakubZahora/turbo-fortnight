@@ -1,9 +1,10 @@
 "use client";
+import Link from "next/link";
 
 import { useEffect, useState } from 'react';
 
 interface User {
-  uid: string;
+  id: string;
   username: string;
   email: string;
 }
@@ -31,12 +32,27 @@ export default function UsersPage() {
       ) : (
         <ul>
           {users.map((user) => (
-            <li key={user.uid}>
+            <li key={user.id}>
               {user.username} ({user.email})
             </li>
           ))}
         </ul>
       )}
+      {/* Return Button */}
+      <div style={{ marginTop: "1rem" }}>
+        <Link href="/">
+          <button 
+            style={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #ccc', 
+              padding: '0.5rem 1rem', 
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}>
+            Return Home
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

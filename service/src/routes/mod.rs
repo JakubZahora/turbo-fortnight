@@ -7,12 +7,11 @@ use axum::{
 use serde::Serialize;
 use serde_json::json;
 use sqlx::PgPool;
-use uuid::Uuid;
 
 // Define the User struct
 #[derive(Serialize)]
 struct User {
-    uid: Uuid,
+    id: i32,
     username: String,
     email: String,
 }
@@ -27,7 +26,7 @@ pub fn create_router(pool: PgPool) -> Router {
 
 // Handler function for the `/api/users` route
 async fn get_users(Extension(pool): Extension<PgPool>) -> Json<serde_json::Value> {
-    let users = sqlx::query_as!(User, "SELECT uid, username, email FROM turbo_fortnight.users")
+    let users = sqlx::query_as!(User, "SELECT id, username, email FROM turbo_fortnight.users")
         .fetch_all(&pool)
         .await
         .expect("Error loading users");
