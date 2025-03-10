@@ -38,6 +38,20 @@ export default function UsersPage() {
       )}
       {/* Return Button */}
       <div style={{ marginTop: "1rem" }}>
+        <Link href="/register">
+          <button 
+            style={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #ccc', 
+              padding: '0.5rem 1rem', 
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}>
+            New User
+          </button>
+        </Link>
+      </div>
+      <div style={{ marginTop: "1rem" }}>
         <Link href="/">
           <button 
             style={{ 
