@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from "next/link";
 
 export default function Home() {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {
     fetch('/api/hello')
@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <div>
-      {message ? message : "Loading..."}
+      {message}
       <div style={{ marginTop: "1rem" }}>
         <Link href="/users">
           <button style={{ 
