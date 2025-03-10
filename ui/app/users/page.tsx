@@ -23,8 +23,6 @@ export default function UsersPage() {
       .catch((error) => setError('Error fetching data'));
   }, []);
 
-  if (error) return <div>{error}</div>;
-
   return (
     <div>
       {users.length === 0 ? (

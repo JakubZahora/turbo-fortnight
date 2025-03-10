@@ -18,7 +18,14 @@ export default function Home() {
       {message ? message : "Loading..."}
       <div style={{ marginTop: "1rem" }}>
         <Link href="/users">
-          <button>Go to Users</button>
+          <button style={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #ccc', 
+              padding: '0.5rem 1rem', 
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}>
+            Go to Users</button>
         </Link>
       </div>
     </div>
